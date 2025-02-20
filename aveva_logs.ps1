@@ -127,9 +127,9 @@ if ($plantSCADAFolder) {
 
 # Archive the destination folder into a ZIP file
 
-if (Test-Path -Path $zipFilePath) {
-    Remove-Item -Path $zipFilePath -Force
-}
+# if (Test-Path -Path $zipFilePath) {
+#     Remove-Item -Path $zipFilePath -Force
+# }
 
 # Notify user of completion
 Write-Output "☑️ All diagnostics have been saved to $destinationFolder"
@@ -143,4 +143,5 @@ Write-Output ""
 Write-Output "ℹ️ You must send this file to support."
 
 # Open the $destinationFolder folder
-Start-Process -FilePath $baseFolder
+Start-Process -FilePath $archestraLogsFolder
+Start-Process -FilePath $destinationFolder
