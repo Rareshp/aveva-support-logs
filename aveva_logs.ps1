@@ -26,6 +26,24 @@ $month = $month.ToString()
 $day = $day.ToString()
 
 
+# Function to get installed applications from the registry
+function Get-InstalledApps {
+    $installedApps = @()
+
+    # Registry paths for installed applications
+    $registryPaths = @(
+        "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+    )
+
+    foreach ($path in $registryPaths) {
+        $apps = Get-ItemProperty $path | Where-Object { $_.DisplayName -and $_.DisplayName -ne "" }
+        $installedApps += $apps | Select-Object DisplayName, DisplayVersion
+    }
+
+    return $installedApps
+}
+
 Write-Output "i Script created by rares.plesea@ace-iss.com"
 Write-Output ""
 
@@ -37,13 +55,8 @@ Get-HotFix |
     Select-Object -Property Caption, Description, HotFixID, InstalledOn |
     Export-Csv -Path "$destinationFolder\$($env:COMPUTERNAME)_InstalledUpdates_$timestamp.csv" -NoTypeInformation
 
-# Export installed applications sorted by Name
-Write-Output "→ Export installed applications (be patient)"
-# Retrieve installed applications, avoiding empty or null values
-$installedApps = Get-WmiObject -Query "Select Name, Version from Win32_Product" |
-    Where-Object { $_.Name -ne $null -and $_.Version -ne $null } |  # Filter out null values
-    Sort-Object Name | 
-    Select-Object -Property Name, Version
+# Retrieve installed applications
+$installedApps = Get-InstalledApps | Sort-Object DisplayName
 
 # Export the list to CSV with proper headers
 $installedApps | Export-Csv -Path "$destinationFolder\$($env:COMPUTERNAME)_InstalledApps_$timestamp.csv" -NoTypeInformation
