@@ -106,6 +106,28 @@ if (Test-Path -Path $archestraLogsFolder) {
     Write-Output "! aaLGX file not found: $archestraLogsFolder"
 }
 
+# Common Service Portal 
+if (Test-Path -Path "C:\Program Files (x86)\AVEVA\Platform Common Services\Portal") {
+    # Check if "Microsoft Edge WebView2 Runtime" is in the exported CSV
+    $csvInstalledApps = Import-Csv -Path "$destinationFolder\$($env:COMPUTERNAME)_InstalledApps_$timestamp.csv"
+    $appName = "Microsoft Edge WebView2 Runtime"
+
+    Write-Output ""
+    Write-Output "i An application should open. Go to Sidebar > Troubleshooing (2nd icon) > Scan > Export."
+
+    if ($csvInstalledApps.DisplayName -contains $appName) {
+        Write-Output "   i AVEVA Common Service Portal prerequisite, $appName, found."
+    } else {
+        Write-Output "   ! AVEVA Common Service Portal may not open on your system. You must install $appName and try again."
+        Write-Output "   i AVEVA Common Service Portal is found in Start Menu > AVEVA Folder > Common Services Portal."
+    }
+
+    Write-Output "i Save the json file, and then copy it to the folder that will open soon."
+    # it is easier to start this process as it has some extra options; the direc exe does not open properly
+    Start-Process "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\AVEVA\Common Services Portal"
+    Read-Host "Press Enter to continue"
+}
+
 #####################################################################################################################
 
 if ($plantSCADAFolder) {
@@ -145,7 +167,8 @@ if ($plantSCADAFolder) {
 # }
 
 # Notify user of completion
-Write-Output "v All diagnostics have been saved to $destinationFolder"
+Write-Output ""
+Write-Output "v Diagnostics have been saved to $destinationFolder"
 
 # Write-Output "i Archiving $destinationFolder into $zipFilePath"
 # Compress-Archive -Path $destinationFolder -DestinationPath $zipFilePath
@@ -153,7 +176,7 @@ Write-Output "v All diagnostics have been saved to $destinationFolder"
 # Write-Output "i Archive created with path: $zipFilePath"
 
 Write-Output ""
-Write-Output "i You must send this file to support."
+Write-Output "i You must send the archived folder to support."
 
 # Open the $destinationFolder folder
 Start-Process -FilePath $archestraLogsFolder
