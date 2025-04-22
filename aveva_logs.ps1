@@ -26,19 +26,19 @@ $month = $month.ToString()
 $day = $day.ToString()
 
 
-Write-Output "ℹ️ Script created by rares.plesea@ace-iss.com"
+Write-Output "i Script created by rares.plesea@ace-iss.com"
 Write-Output ""
 
 #####################################################################################################################
-# ↪️ Export installed updates
-Write-Output "↪️ Export installed updates"
+# → Export installed updates
+Write-Output "→ Export installed updates"
 Get-HotFix |
     Sort-Object InstalledOn |
     Select-Object -Property Caption, Description, HotFixID, InstalledOn |
     Export-Csv -Path "$destinationFolder\$($env:COMPUTERNAME)_InstalledUpdates_$timestamp.csv" -NoTypeInformation
 
 # Export installed applications sorted by Name
-Write-Output "↪️ Export installed applications (be patient)"
+Write-Output "→ Export installed applications (be patient)"
 # Retrieve installed applications, avoiding empty or null values
 $installedApps = Get-WmiObject -Query "Select Name, Version from Win32_Product" |
     Where-Object { $_.Name -ne $null -and $_.Version -ne $null } |  # Filter out null values
@@ -49,23 +49,23 @@ $installedApps = Get-WmiObject -Query "Select Name, Version from Win32_Product" 
 $installedApps | Export-Csv -Path "$destinationFolder\$($env:COMPUTERNAME)_InstalledApps_$timestamp.csv" -NoTypeInformation
 
 # Export system information
-Write-Output "↪️ Export system information"
+Write-Output "→ Export system information"
 systeminfo | Out-File -FilePath "$destinationFolder\$($env:COMPUTERNAME)_Systeminfo_$timestamp.txt"
 
 # Export list of all services
-Write-Output "↪️ Export list of all services"
+Write-Output "→ Export list of all services"
 Get-Service | Out-File -FilePath "$destinationFolder\$($env:COMPUTERNAME)_Services_$timestamp.txt"
 
 # Export ports information with active connections
-Write-Output "↪️ Export ports information with active connections"
+Write-Output "→ Export ports information with active connections"
 netstat -a -b | Out-File -FilePath "$destinationFolder\$($env:COMPUTERNAME)_Ports_$timestamp.txt"
 
 # Export System event logs
-Write-Output "↪️ Export System event logs"
+Write-Output "→ Export System event logs"
 wevtutil epl System "$destinationFolder\$($env:COMPUTERNAME)_System_event_log_$timestamp.evtx"
 
 # Export Application event logs
-Write-Output "↪️ Export Application event logs"
+Write-Output "→ Export Application event logs"
 wevtutil epl Application "$destinationFolder\$($env:COMPUTERNAME)_Application_event_log_$timestamp.evtx"
 
 Start-Sleep -Seconds 1
@@ -74,8 +74,8 @@ Start-Sleep -Seconds 1
 
 # LogViewer
 Write-Output ""
-Write-Output "ℹ️ An application will open. Go to Action > Messages > Export. Then click OK."
-Write-Output "ℹ️ When you are done come back to this PowerShell window and press Enter to continue."
+Write-Output "i An application will open. Go to Action > Messages > Export. Then click OK."
+Write-Output "i When you are done come back to this PowerShell window and press Enter to continue."
 Start-Process "C:\Program Files (x86)\Common Files\ArchestrA\aaLogViewer.exe"
 Read-Host "Press Enter to continue"
 
@@ -88,23 +88,23 @@ $archestraLogsourcePath = Join-Path -Path $archestraLogsFolder -ChildPath $logFi
 # Check if the file exists, then copy it
 if (Test-Path -Path $archestraLogsFolder) {
     Copy-Item -Path $archestraLogsourcePath -Destination $destinationFolder
-    Write-Output "ℹ️ aaLGX file copied successfully to $destinationFolder"
+    Write-Output "i aaLGX file copied successfully to $destinationFolder"
 } else {
-    Write-Output "⚠️ aaLGX file not found: $archestraLogsFolder"
+    Write-Output "! aaLGX file not found: $archestraLogsFolder"
 }
 
 #####################################################################################################################
 
 if ($plantSCADAFolder) {
     Write-Output ""
-    Write-Output "ℹ️ Found Plant SCADA logs folder"
+    Write-Output "i Found Plant SCADA logs folder"
     $targetFolder = Join-Path -Path $destinationFolder -ChildPath $plantSCADAFolder.Parent.Name
     # Check if the folder exists, and create it if not
     if (-Not (Test-Path -Path $targetFolder)) {
         New-Item -Path $targetFolder -ItemType Directory | Out-Null
         # Write-Output "Created folder: $targetFolder"
     }
-    Write-Output "🔎 Scanning folder: $($plantSCADAFolder.FullName)"
+    Write-Output "i Scanning folder: $($plantSCADAFolder.FullName)"
 
     # Get all .txt, .dat, and .log files in the folder (non-recursive)
     $files = Get-ChildItem -Path "$($plantSCADAFolder.FullName)\*" -Include *.txt, *.dat, *.log -File -ErrorAction SilentlyContinue
@@ -115,12 +115,12 @@ if ($plantSCADAFolder) {
             Copy-Item -Path $file.FullName -Destination "$targetFolder" -Force
         }
     } else {
-        Write-Output "⚠️ No .txt, .dat, or .log files found in $($plantSCADAFolder.FullName)."
+        Write-Output "! No .txt, .dat, or .log files found in $($plantSCADAFolder.FullName)."
     }
 
 }
 # else {
-#     Write-Output "⚠️ No matching Plant SCADA folders found."
+#     Write-Output "! No matching Plant SCADA folders found."
 # }
 
 #####################################################################################################################
@@ -132,15 +132,15 @@ if ($plantSCADAFolder) {
 # }
 
 # Notify user of completion
-Write-Output "☑️ All diagnostics have been saved to $destinationFolder"
+Write-Output "v All diagnostics have been saved to $destinationFolder"
 
-# Write-Output "ℹ️ Archiving $destinationFolder into $zipFilePath"
+# Write-Output "i Archiving $destinationFolder into $zipFilePath"
 # Compress-Archive -Path $destinationFolder -DestinationPath $zipFilePath
 
-# Write-Output "ℹ️ Archive created with path: $zipFilePath"
+# Write-Output "i Archive created with path: $zipFilePath"
 
 Write-Output ""
-Write-Output "ℹ️ You must send this file to support."
+Write-Output "i You must send this file to support."
 
 # Open the $destinationFolder folder
 Start-Process -FilePath $archestraLogsFolder
