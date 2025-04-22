@@ -7,7 +7,7 @@ $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $destinationFolder = Join-Path -Path $baseFolder -ChildPath "aveva_logfiles_$timestamp"
 $zipFilePath = Join-Path -Path $baseFolder -ChildPath "aveva_logfiles_$timestamp.zip"
 
-$archestraLogsFolder = "C:\ProgramData\ArchestrA\Logger\Log Exports"
+$archestraLogsFolder = "C:\ProgramData\ArchestrA\Logger\LogExports"
 $plantSCADAFolder = Get-ChildItem -Path "$env:ProgramData\AVEVA Plant SCADA *\Logs" -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
 
 # Ensure the destination folder exists
@@ -80,7 +80,7 @@ Start-Process "C:\Program Files (x86)\Common Files\ArchestrA\aaLogViewer.exe"
 Read-Host "Press Enter to continue"
 
 # Construct the filename
-$logFileName = "Log Export$($month)$($day)$($year).aaLGX"
+$logFileName = "LogExport$($month)$($day)$($year).aaLGX"
 
 # Build the full source path
 $archestraLogsourcePath = Join-Path -Path $archestraLogsFolder -ChildPath $logFileName
