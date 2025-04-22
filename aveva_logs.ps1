@@ -134,10 +134,10 @@ if ($plantSCADAFolder) {
 # Notify user of completion
 Write-Output "☑️ All diagnostics have been saved to $destinationFolder"
 
-Write-Output "ℹ️ Archiving $destinationFolder into $zipFilePath"
-Compress-Archive -Path $destinationFolder -DestinationPath $zipFilePath
+# Write-Output "ℹ️ Archiving $destinationFolder into $zipFilePath"
+# Compress-Archive -Path $destinationFolder -DestinationPath $zipFilePath
 
-Write-Output "ℹ️ Archive created with path: $zipFilePath"
+# Write-Output "ℹ️ Archive created with path: $zipFilePath"
 
 Write-Output ""
 Write-Output "ℹ️ You must send this file to support."
