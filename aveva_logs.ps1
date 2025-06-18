@@ -85,25 +85,29 @@ Start-Sleep -Seconds 1
 
 #####################################################################################################################
 
-# LogViewer
 Write-Output ""
-Write-Output "i An application will open. Go to Action > Messages > Export. Then click OK."
-Write-Output "i When you are done come back to this PowerShell window and press Enter to continue."
-Start-Process "C:\Program Files (x86)\Common Files\ArchestrA\aaLogViewer.exe"
-Read-Host "Press Enter to continue"
 
-# Construct the filename
-$logFileName = "LogExport$($month)$($day)$($year).aaLGX"
+# LogViewer
+$logViewer = "C:\Program Files (x86)\Common Files\ArchestrA\aaLogViewer.exe"
+if (Test-Path $logViewer) {
+    Write-Output "i An application will open; it has AVEVA logs. Go to Action > Messages > Export. Then click OK."
+    Write-Output "i When you are done come back to this PowerShell window and press Enter to continue."
+    Start-Process $logViewer
+    Read-Host "Press Enter to continue"
 
-# Build the full source path
-$archestraLogsourcePath = Join-Path -Path $archestraLogsFolder -ChildPath $logFileName
+    # Construct the filename
+    $logFileName = "LogExport$($month)$($day)$($year).aaLGX"
 
-# Check if the file exists, then copy it
-if (Test-Path -Path $archestraLogsFolder) {
-    Copy-Item -Path $archestraLogsourcePath -Destination $destinationFolder
-    Write-Output "i aaLGX file copied successfully to $destinationFolder"
-} else {
-    Write-Output "! aaLGX file not found: $archestraLogsFolder"
+    # Build the full source path
+    $archestraLogsourcePath = Join-Path -Path $archestraLogsFolder -ChildPath $logFileName
+
+    # Check if the file exists, then copy it
+    if (Test-Path -Path $archestraLogsFolder) {
+        Copy-Item -Path $archestraLogsourcePath -Destination $destinationFolder
+        Write-Output "i aaLGX file copied successfully to $destinationFolder"
+    } else {
+        Write-Output "! aaLGX file not found: $archestraLogsFolder"
+    }
 }
 
 # Common Service Portal 
